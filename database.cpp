@@ -33,6 +33,7 @@ int main()
     createTable("class10");
     for (const auto &i : database)
     {
+        // table name
         std::cout << "Table name : " << i.name << '\n';
     }
     return 0;
