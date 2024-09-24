@@ -34,7 +34,7 @@ void createTable(std::string tableName)
 // function to insert row in a table
 void insertIntoTable(std::string tableName, int id, std::string name)
 {
-    std::cout << "table name is : " << tableName << " id is : " << id << " name is : " << name;
+    // std::cout << "table name is : " << tableName << " id is : " << id << " name is : " << name;
     for (auto &table : database)
     {
         // found the table
@@ -117,60 +117,49 @@ void printAllTables()
         std::cout << "\n";
     }
 }
-// Function to parse and handle the CREATE TABLE command
-void parseCreateTableCommand(const std::string &command)
+// parsing commands
+void parseCommand(const std::string &command)
 {
-    std::cout << command << "\n";
-    std::stringstream s(command);
-    std::string word, result, tableName, name;
-    int id;
-    while (s >> word)
+    std::cout << "Command: " << command << "\n";
+
+    // Define regular expressions for different command patterns
+    std::regex createRegex(R"(create\s+(\w+))");
+    std::regex dropRegex(R"(drop\s+(\w+))");
+    std::regex truncateRegex(R"(truncate\s+(\w+))");
+    std::regex insertRegex(R"(insert\s+(\w+)\s+\((\d+),\s*\"([^\"]+)\"\))");
+    std::smatch match;
+
+    // Check for CREATE command
+    if (std::regex_match(command, match, createRegex))
     {
-        // valid custom db commands so that we can easily know what operations to do
-        if (word == "create" || word == "insert" || word == "truncate" || word == "drop")
-        {
-            result += word[0];
-        }
-        // table name
-        else if (word.substr(0, 2) == "t_")
-        {
-            tableName = word;
-        }
-        // if the command has inserting operation
-        // ! IMPROVE HERE
-        else if (word[0] == '(')
-        {
-            // row id
-            id = word[1] - '0';
-            // row string
-            int indexOfComma = word.find(',');
-            name = word.substr(indexOfComma + 2, word.length() - 4);
-            std::cout << name << " ";
-        }
-    }
-    // creating just a table example: create "table name"
-    if (tableName.size() > 0 && result == "c")
-    {
+        std::string tableName = match[1];
         createTable(tableName);
     }
-    // drop table example: drop "table name"
-    else if (tableName.size() > 0 && result == "d")
+    // Check for DROP command
+    else if (std::regex_match(command, match, dropRegex))
     {
+        std::string tableName = match[1];
         dropTable(tableName);
     }
-    // truncate table example: truncate "table name"
-    else if (tableName.size() > 0 && result == "t")
+    // Check for TRUNCATE command
+    else if (std::regex_match(command, match, truncateRegex))
     {
+        std::string tableName = match[1];
         truncateTable(tableName);
     }
-    // insert values into table example: insert "table name" (1,"Deepak")
-    else if (tableName.size() > 0 && result == "i")
+    // Check for INSERT command
+    else if (std::regex_match(command, match, insertRegex))
     {
+        std::string tableName = match[1];
+        // extract id from match
+        int id = std::stoi(match[2]);
+        // extract name from match
+        std::string name = match[3];
         insertIntoTable(tableName, id, name);
     }
     else
     {
-        std::cout << "Command doesn't exists\n";
+        std::cout << "Unknown or invalid command format!\n";
     }
 }
 int main()
@@ -188,9 +177,10 @@ int main()
     }
     while (true)
     {
+        std::cout << "-> create t_tablename to create table name\n-> drop t_tablename to drop table\n-> truncate t_tablename to truncate table\n-> insert t_tablename (int,string) to insert new rows in a table\n";
         std::cout << "Enter the command : \n";
         std::getline(std::cin, command);
-        parseCreateTableCommand(command);
+        parseCommand(command);
     }
     return 0;
 }
