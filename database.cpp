@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 // structure for the row data
 struct Row
 {
@@ -35,14 +36,25 @@ void insertIntoTable(std::string tableName, int id, std::string name)
     for (auto &table : database)
     {
         // found the table
-        if (table.tableName == tableName)
+        if (table.tableName.compare(tableName) == 0)
         {
             // inserting the row with id and name into the table
             table.rows.push_back({id, name});
-            std::cout << "Data inserted successfully!\n";
+            // making the file path
+            std::string filePath = "database/" + tableName + ".csv";
+            // for inserting rows to ensure new rows are added to the end of the file (appending at end of the file)
+            std::ofstream outFile(filePath, std::ios::app);
+            if (outFile.is_open())
+            {
+                // csv format
+                outFile << id << "," << name << "\n";
+                outFile.close();
+            }
+            std::cout << "Row inserted successfully!\n";
             return;
         }
     }
+    std::cout << "Table not found! Enter correct table name\n";
 }
 // function to drop table from database
 void dropTableFromDatabase(std::string tableName)
@@ -58,6 +70,7 @@ void dropTableFromDatabase(std::string tableName)
             return;
         }
     }
+    std::cout << "Table not found! Enter correct table name\n";
 }
 // saving current data in database
 void saveDatabase()
@@ -88,11 +101,22 @@ void printAllTables()
 }
 int main()
 {
+    std::string folderName = "database";
+    // if folder exists
+    if (std::filesystem::exists(folderName))
+    {
+        std::cout << "Folder already exists\n";
+    }
+    // creating folder
+    else
+    {
+        std::filesystem::create_directory(folderName);
+    }
     int option, id;
     std::string tableName, name;
     while (true)
     {
-        std::cout << "Enter your option :\n 1.Create Table\n 2.Insert Row into Table\n 3.Drop a Table\n 4.Print All Table";
+        std::cout << "Enter your option :\n 1.Create Table\n 2.Insert Row into Table\n 3.Drop a Table\n 4.Print All Table\n 5.Exit Program";
         std::cin >> option;
         switch (option)
         {
@@ -105,7 +129,7 @@ int main()
         // insert row into table
         case 2:
             std::cout << "Enter the table name : ";
-            std::cin >> name;
+            std::cin >> tableName;
             std::cout << "Enter the id : ";
             std::cin >> id;
             std::cout << "Enter the name : ";
@@ -122,8 +146,11 @@ int main()
         case 4:
             printAllTables();
             break;
+        // exit the program
+        case 5:
+            return 0;
         default:
-            break;
+            return 0;
         }
     }
     return 0;
