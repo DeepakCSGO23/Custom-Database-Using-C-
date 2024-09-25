@@ -135,7 +135,7 @@ void parseCommand(const std::string &command)
         std::string tableName = match[1];
         createTable(tableName);
     }
-    // Check for DROP command
+    // Check for DROP command,
     else if (std::regex_match(command, match, dropRegex))
     {
         std::string tableName = match[1];
