@@ -3,6 +3,7 @@
 ## Overview
 
 This project is a custom local database management system implemented in C++. It allows users to create, insert, truncate, and drop tables using custom commands. The data is stored locally in CSV files, which are read back into memory when needed. The system supports basic table operations with minimal overhead and is designed for small-scale, local data storage applications.
+Please note that this project is purely for educational purposes and does not serve any practical or useful purpose.
 
 ## Features
 
