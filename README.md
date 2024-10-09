@@ -64,10 +64,4 @@ Here are the commands you can use with this system:
 - **Expand Functionality**: Add support for more complex queries and operations.
 - **UI Integration**: Consider integrating a basic UI for easier interaction with the database.
 
-## Contributing
 
-Feel free to contribute to this project by opening a pull request. All contributions are welcome!
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
